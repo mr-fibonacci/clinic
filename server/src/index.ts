@@ -1,5 +1,5 @@
 import app from './app';
-import { sequelize } from './models/db-config';
+import { sequelize } from './config/pg-config';
 
 const start = async () => {
   try {

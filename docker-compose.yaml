@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    command: ['--requirepass "secretredispassword"']
+  clinic_api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    ports:
+      - '3000:3000'
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASS=secretredispassword
+      - PG_USER=postgres
+      - PG_HOST=postgres
+      - PG_DB_NAME=postgres
+      - PG_PASS=postgres_password
+      - PG_PORT=5432
+      - SESS_SECRET=hushhush
+volumes:
+  pgdata:
