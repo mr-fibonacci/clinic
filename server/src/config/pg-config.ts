@@ -30,4 +30,4 @@ export const sequelize = new Sequelize({
 
 patient(sequelize);
 
-sequelize.sync({ alter: true });
+sequelize.sync({ force: true });

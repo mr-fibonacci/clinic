@@ -22,19 +22,24 @@ export class Patient
   firstName!: string;
   lastName!: string;
 
-  signup = async (email: string, password: string): Promise<void> => {
+  static signup = async (email: string, password: string): Promise<void> => {
     let patient = await Patient.findOne({ where: { email } });
     if (patient) throw new Error('Email in use');
     patient = await Patient.create({ email, password });
   };
 
-  signin = async (email: string, password: string): Promise<void> => {
+  static signin = async (email: string, password: string): Promise<void> => {
     const patient = await Patient.findOne({ where: { email } });
     if (!patient) throw new Error('Invalid credentials');
-    const passwordsMatch = Password.compare(password, patient.password);
+    const passwordsMatch = await Password.compare(password, patient.password);
     if (!passwordsMatch) throw new Error('Invalid credentials');
   };
 }
+
+const hashPassHook = async (patient: Patient) => {
+  const hashedPass = await Password.toHash(patient.password);
+  patient.setDataValue('password', hashedPass);
+};
 
 export const patient = (sequelize: Sequelize) => {
   Patient.init(
@@ -57,10 +62,7 @@ export const patient = (sequelize: Sequelize) => {
     },
     {
       hooks: {
-        beforeCreate: async (patient) => {
-          const { password } = patient;
-          patient.password = await Password.toHash(password);
-        }
+        beforeSave: hashPassHook
       },
       sequelize
     }
