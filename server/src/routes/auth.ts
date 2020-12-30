@@ -1,17 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { requireLogin } from '../middlewares/require-auth';
+import { requireLogin } from '../middlewares/require-login';
 import { Patient } from '../models/patient';
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Session {
-      currentUser: {
-        email: string;
-      };
-    }
-  }
-}
 
 const router = Router();
 
@@ -38,17 +27,23 @@ router.post('/signout', async (req: Request, res: Response) => {
   res.send('signed out');
 });
 
-router.get('/protected', requireLogin, async (req: Request, res: Response) => {
-  res.send('protected');
+router.post('/forgotpassword', async (req: Request, res: Response) => {
+  const { email } = req.body;
+  await Patient.sendForgotPasswordEmail(email);
+  res.send('OK');
 });
 
-router.post('/changepass', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const patient = await Patient.findOne({ where: { email } });
-  if (!patient) throw new Error('patient not found');
-  patient.setDataValue('password', password);
-  await patient.save();
+router.post('/resetpassword/:token', async (req: Request, res: Response) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  await Patient.resetPassword(token, password);
+
   res.send('OK');
+});
+
+router.get('/protected', requireLogin, async (req: Request, res: Response) => {
+  res.send('protected');
 });
 
 router.get('/users', async (req: Request, res: Response) => {

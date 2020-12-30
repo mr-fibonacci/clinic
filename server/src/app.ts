@@ -18,7 +18,7 @@ app.use(authRouter);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(400).send(err.message);
+  res.status(500).send(`server did an oopsie! ${err.message}`);
 });
 
 export default app;

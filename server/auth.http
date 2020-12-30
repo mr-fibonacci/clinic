@@ -2,7 +2,7 @@ POST http://localhost:3000/signup
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
+  "email": "adamlapinski5@gmail.com",
   "password": "pass"
 }
 ###
@@ -14,15 +14,21 @@ Content-Type: application/json
   "password": "pass"
 }
 ###
-POST http://localhost:3000/changepass
+POST http://localhost:3000/signout
+###
+POST http://localhost:3000/forgotpassword
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
-  "password": "passsss"
+  "email": "adamlapinski5@gmail.com"
 }
 ###
-POST http://localhost:3000/signout
+POST http://localhost:3000/resetpassword/fcfbf69031b7434da1bf013e6368d1d83fb47158
+Content-Type: application/json
+
+{
+  "password": "yaynewpassword"
+}
 ###
 GET http://localhost:3000/protected
 ###

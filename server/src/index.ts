@@ -1,5 +1,6 @@
 import app from './app';
 import { sequelize } from './config/pg-config';
+import './augmented-types';
 
 const start = async () => {
   try {

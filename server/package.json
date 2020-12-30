@@ -16,6 +16,7 @@
     "@types/express-session": "^1.17.0",
     "@types/ioredis": "^4.17.9",
     "@types/node": "^14.14.14",
+    "@types/nodemailer": "^6.4.0",
     "@types/validator": "^13.1.1",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",
@@ -32,6 +33,7 @@
     "express-async-errors": "^3.1.1",
     "express-session": "^1.17.1",
     "ioredis": "^4.19.4",
+    "nodemailer": "^6.4.17",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"

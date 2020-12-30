@@ -25,12 +25,15 @@ const redisClient = new Redis(REDIS_OPTIONS);
 export const redisSession = session({
   store: new RedisStore({ client: redisClient }),
   secret: SESS_SECRET,
+  resave: false,
+  saveUninitialized: true,
   name: 'sid',
   cookie: {
     signed: true,
     secure: false,
     httpOnly: true,
-    maxAge: 3600000
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
   }
 });
 

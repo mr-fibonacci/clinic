@@ -6,7 +6,7 @@ export const requireLogin = (
   next: NextFunction
 ): void => {
   if (!req.session?.currentUser) {
-    return res.redirect('/');
+    throw new Error('Please log in!');
   }
   next();
 };
