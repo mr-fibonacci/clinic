@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto';
 import { DataTypes, Model, Sequelize, Op } from 'sequelize';
 import { Password } from '../classes/password';
 import { resetMailOptions, sendMail } from '../config/nodemailer-config';
+import { NotAuthorizedError } from '../errors/not-authorized-error';
 
 interface PatientFields {
   email: string;
@@ -30,20 +31,20 @@ export class Patient
 
   static signup = async (email: string, password: string): Promise<void> => {
     let patient = await Patient.findOne({ where: { email } });
-    if (patient) throw new Error('Email in use');
+    if (patient) throw new NotAuthorizedError('Invalid credentials');
     patient = await Patient.create({ email, password });
   };
 
   static signin = async (email: string, password: string): Promise<void> => {
     const patient = await Patient.findOne({ where: { email } });
-    if (!patient) throw new Error('Invalid credentials');
+    if (!patient) throw new NotAuthorizedError('Invalid credentials');
     const passwordsMatch = await Password.compare(password, patient.password);
-    if (!passwordsMatch) throw new Error('Invalid credentials');
+    if (!passwordsMatch) throw new NotAuthorizedError('Invalid credentials');
   };
 
   static sendForgotPasswordEmail = async (email: string): Promise<void> => {
     const patient = await Patient.findOne({ where: { email } });
-    if (!patient) throw new Error('invalid credentials');
+    if (!patient) throw new NotAuthorizedError('invalid credentials');
 
     const token = randomBytes(20).toString('hex');
     const tokenExpires = Date.now() + 1000 * 60 * 60;
@@ -61,7 +62,7 @@ export class Patient
     const patient = await Patient.findOne({
       where: { token, tokenExpires: { [Op.gt]: Date.now() } }
     });
-    if (!patient) throw new Error('Invalid token');
+    if (!patient) throw new NotAuthorizedError('Invalid token');
 
     patient.set({ password, token: undefined, tokenExpires: undefined });
     await patient.save();
@@ -75,6 +76,7 @@ const hashPasswordHook = async (patient: Patient) => {
   patient.setDataValue('password', hashedPass);
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const patient = (sequelize: Sequelize) => {
   Patient.init(
     {

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { NotAuthorizedError } from '../errors/not-authorized-error';
 
 export const requireLogin = (
   req: Request,
@@ -6,7 +7,7 @@ export const requireLogin = (
   next: NextFunction
 ): void => {
   if (!req.session?.currentUser) {
-    throw new Error('Please log in!');
+    throw new NotAuthorizedError('Please sign in');
   }
   next();
 };

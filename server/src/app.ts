@@ -1,8 +1,8 @@
-import express, { json, NextFunction, Request, Response } from 'express';
+import express, { json, Request, Response } from 'express';
 import 'express-async-errors';
-
 import { redisSession } from './config/redis-config';
 
+import { handleErrors } from './middlewares/handle-errors';
 import authRouter from './routes/auth';
 
 const app = express();
@@ -16,9 +16,6 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(authRouter);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).send(`server did an oopsie! ${err.message}`);
-});
+app.use(handleErrors);
 
 export default app;
