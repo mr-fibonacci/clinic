@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
-import { Patient } from '../models/patient';
+import { User } from '../models/user';
 import {
   authReqBody,
   validateEmail,
@@ -15,7 +15,7 @@ router.post(
   ...validateRequestBody(authReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    await Patient.signup(email, password);
+    await User.signup(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     req.session!.currentUser = { email };
     res.send(req.body);
@@ -27,7 +27,7 @@ router.post(
   ...validateRequestBody(authReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    await Patient.signin(email, password);
+    await User.signin(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     req.session!.currentUser = { email };
     res.send(req.session);
@@ -46,7 +46,7 @@ router.post(
   ...validateRequestBody([validateEmail]),
   async (req: Request, res: Response) => {
     const { email } = req.body;
-    await Patient.sendForgotPasswordEmail(email);
+    await User.sendForgotPasswordEmail(email);
     res.send('OK');
   }
 );
@@ -58,7 +58,7 @@ router.post(
     const { token } = req.params;
     const { password } = req.body;
 
-    await Patient.resetPassword(token, password);
+    await User.resetPassword(token, password);
 
     res.send('OK');
   }
@@ -69,8 +69,8 @@ router.get('/protected', requireLogin, async (req: Request, res: Response) => {
 });
 
 router.get('/users', async (req: Request, res: Response) => {
-  const patients = await Patient.findAll();
-  res.send(patients);
+  const users = await User.findAll();
+  res.send(users);
 });
 
 export default router;

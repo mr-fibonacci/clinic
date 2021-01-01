@@ -3,8 +3,8 @@ version: '3'
 services:
   postgres:
     image: postgres:latest
-    environment:
-      - POSTGRES_PASSWORD=postgres_password
+    ports:
+      - '5432:5432'
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -27,10 +27,10 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASS=secretredispassword
-      - PG_USER=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
       - PG_HOST=postgres
       - PG_DB_NAME=postgres
-      - PG_PASS=postgres_password
       - PG_PORT=5432
       - SESS_SECRET=hushhush
 volumes:
