@@ -18,7 +18,7 @@ router.post(
     await User.signup(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     req.session!.currentUser = { email };
-    res.send(req.body);
+    res.sendStatus(201);
   }
 );
 

@@ -1,19 +1,6 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres:latest
-    ports:
-      - '5432:5432'
-    restart: always
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-  redis:
-    image: redis:latest
-    restart: always
-    ports:
-      - '6379:6379'
-    command: ['--requirepass "secretredispassword"']
   clinic_api:
     build:
       dockerfile: Dockerfile.dev
@@ -33,5 +20,21 @@ services:
       - PG_DB_NAME=postgres
       - PG_PORT=5432
       - SESS_SECRET=hushhush
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    command: ['--requirepass "secretredispassword"']
 volumes:
   pgdata:
