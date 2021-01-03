@@ -1,0 +1,27 @@
+POST http://localhost:3000/medics
+Content-Type: application/json
+
+{
+  "email": "doctor1@doctor.com",
+  "password": "pass",
+  "image": "yay an image",
+  "type": "doctor",
+  "shiftStart": 9,
+  "shiftEnd": 11
+}
+###
+PUT http://localhost:3000/medics/1
+Content-Type: application/json
+
+{
+  "image": "yay a newer image",
+  "shiftEnd": 4,
+  "UserId": 123,
+  "id": 456
+}
+###
+DELETE http://localhost:3000/medics/1
+###
+GET http://localhost:3000/medics/1
+###
+GET http://localhost:3000/medics

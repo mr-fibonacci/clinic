@@ -4,6 +4,9 @@ import { redisSession } from './config/redis-config';
 
 import { handleErrors } from './middlewares/handle-errors';
 import userRoutes from './routes/user-routes';
+import medicRoutes from './routes/medic-routes';
+import patientRoutes from './routes/patient-routes';
+import appointmentRoutes from './routes/appointment-routes';
 
 const app = express();
 
@@ -15,6 +18,9 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(userRoutes);
+app.use(patientRoutes);
+app.use(medicRoutes);
+app.use('/appointments', appointmentRoutes);
 
 app.use(handleErrors);
 

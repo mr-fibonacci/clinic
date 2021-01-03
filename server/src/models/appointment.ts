@@ -1,21 +1,24 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { SCHEDULE_DAYS_AHEAD } from '../custom-types-consts';
+import { getDatesRange } from '../utils/date-time';
+import { Medic } from './medic';
 
-enum AppointmentType {
-  consultation = 'consultation',
-  procedure = 'procedure'
-}
+// enum AppointmentType {
+//   consultation = 'consultation',
+//   procedure = 'procedure'
+// }
 
 interface AppointmentFields {
   PatientId: number;
   MedicId: number;
-  type: AppointmentType;
-  time: string;
+  // type: AppointmentType;
+  timestamp: Date;
 }
 
-interface AppointmentAttrs {
+export interface AppointmentAttrs {
   MedicId: number;
-  type: AppointmentType;
-  time: string;
+  // type: AppointmentType;
+  timestamp: Date;
 }
 
 export class Appointment
@@ -24,26 +27,60 @@ export class Appointment
   id!: number;
   MedicId!: number;
   PatientId!: number;
-  type!: AppointmentType;
-  time!: string;
+  // type!: AppointmentType;
+  timestamp!: Date;
+
+  static generateInRange = async (
+    daysAhead1: number,
+    daysAhead2: number
+  ): Promise<void> => {
+    const dates = getDatesRange(daysAhead1, daysAhead2);
+
+    const medics = await Medic.findAll();
+    // {attributes: ['id', 'shiftStart', 'shiftEnd']}
+
+    await Promise.all(
+      dates.map((date) => {
+        return Promise.all(
+          medics.map((medic) => {
+            return medic.generateAppointments(date);
+          })
+        );
+      })
+    );
+  };
+
+  static initialize = async (
+    daysAhead = SCHEDULE_DAYS_AHEAD
+  ): Promise<void> => {
+    await Appointment.generateInRange(0, daysAhead);
+  };
+
+  static append = async (daysAhead = SCHEDULE_DAYS_AHEAD): Promise<void> => {
+    await Appointment.generateInRange(daysAhead, daysAhead + 1);
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const appointment = (sequelize: Sequelize) => {
   Appointment.init(
     {
-      MedicId: { type: DataTypes.INTEGER, allowNull: false },
-      PatientId: {
+      MedicId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: 'composite1'
       },
-      type: {
-        type: DataTypes.ENUM,
-        values: Object.values(AppointmentType),
-        allowNull: false
+      PatientId: {
+        type: DataTypes.INTEGER
       },
-      time: {
+      // type: {
+      //   type: DataTypes.ENUM,
+      //   values: Object.values(AppointmentType),
+      //   allowNull: false
+      // },
+      timestamp: {
         type: 'TIMESTAMP',
+        unique: 'composite1',
         allowNull: false
       }
     },
@@ -52,12 +89,3 @@ export const appointment = (sequelize: Sequelize) => {
 
   return Appointment;
 };
-
-// new Date().toISOString().split('T')[0]
-// new Date().toLocaleDateString()
-// function showDay(d) {
-//   return ["weekday", "weekend"][parseInt(d.getDay() / 6)];
-// }
-
-// console.log(showDay(new Date()));
-// bulkCreate

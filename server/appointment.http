@@ -1,0 +1,6 @@
+GET http://localhost:3000/appointments/initialize
+###
+GET http://localhost:3000/appointments/append
+###
+GET http://localhost:3000/appointments
+###
