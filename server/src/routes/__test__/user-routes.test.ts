@@ -4,7 +4,7 @@ import { ResourceNotFoundError } from '../../errors/resource-not-found-error';
 import { User } from '../../models/user';
 
 describe('/signup', () => {
-  const url = '/signup';
+  const url = '/users/signup';
 
   it('if req.body ok, returns 201, creates a user, creates a longer password, sets a cookie', async () => {
     const res = await request(app)
@@ -65,7 +65,7 @@ describe('/signup', () => {
 });
 
 describe('/signin', () => {
-  const url = '/signin';
+  const url = '/users/signin';
   beforeEach(async () => {
     await User.signup('user@user.com', 'password');
   });
@@ -121,13 +121,13 @@ describe('/signin', () => {
 
 describe('/signout', () => {
   it('returns 200 and clears cookie', async () => {
-    const res = await request(app).post('/signout').expect(200);
+    const res = await request(app).post('/users/signout').expect(200);
     expect(res.get('Set-Cookie')).toBeUndefined();
   });
 });
 
 describe('/forgotpassword', () => {
-  const url = '/forgotpassword';
+  const url = '/users/forgotpassword';
   beforeEach(async () => {
     await User.signup('user@user.com', 'password');
   });
@@ -163,7 +163,7 @@ describe('/resetpassword/:token', () => {
 
   it('returns 200, resets token and tokenExpires fields, sets cookie', async () => {
     const res = await request(app)
-      .post(`/resetpassword/${token}`)
+      .post(`/users/resetpassword/${token}`)
       .send({ password: 'anewpass' })
       .expect(200);
 
@@ -180,7 +180,7 @@ describe('/resetpassword/:token', () => {
 
   it('returns 422 if password shorter than 4 characters', async () => {
     await request(app)
-      .post(`/resetpassword/${token}`)
+      .post(`/users/resetpassword/${token}`)
       .send({ password: 'yay' })
       .expect(422);
   });

@@ -8,6 +8,7 @@ import { Patient } from './patient';
 import { Secretary } from './secretary';
 
 interface UserFields {
+  id: number;
   email: string;
   password: string;
   firstName: string;
@@ -83,6 +84,11 @@ const hashPasswordHook = async (user: User) => {
 export const user = (sequelize: Sequelize) => {
   User.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -115,9 +121,9 @@ export const user = (sequelize: Sequelize) => {
     }
   );
 
-  User.hasOne(Patient);
-  User.hasOne(Medic);
-  User.hasOne(Secretary);
+  User.hasOne(Patient, { onDelete: 'CASCADE' });
+  User.hasOne(Medic, { onDelete: 'CASCADE' });
+  User.hasOne(Secretary, { onDelete: 'CASCADE' });
 
   return User;
 };

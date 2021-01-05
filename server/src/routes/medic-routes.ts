@@ -1,28 +1,41 @@
 import { Request, Response, Router } from 'express';
+import { ResourceNotFoundError } from '../errors/resource-not-found-error';
+import { validateRequestBody } from '../middlewares/validate-request-body';
 import { Medic } from '../models/medic';
+import { medicReqBody } from '../validation-chains/medic-req-body';
 
 const router = Router();
 
-router.post('/medics', async (req: Request, res: Response) => {
-  const { email, password, image, type, shiftStart, shiftEnd } = req.body;
-  await Medic.add({ email, password, image, type, shiftStart, shiftEnd });
+router.post(
+  '/',
+  ...validateRequestBody(medicReqBody),
+  async (req: Request, res: Response) => {
+    const { email, password, image, type, shiftStart, shiftEnd } = req.body;
+    await Medic.add({ email, password, image, type, shiftStart, shiftEnd });
+    res.sendStatus(201);
+  }
+);
 
-  res.send('OK');
-});
-
-router.put('/medics/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   await Medic.edit(id, req.body);
-  res.send('OK');
+  res.sendStatus(200);
 });
 
-router.delete('/medics/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   await Medic.remove(id);
-  res.send('OK');
+  res.sendStatus(200);
 });
 
-router.get('/medics', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const medic = await Medic.findOne({ where: { id } });
+  if (!medic) throw new ResourceNotFoundError('medic');
+  res.send(medic);
+});
+
+router.get('/', async (req: Request, res: Response) => {
   const medics = await Medic.findAll();
   res.send(medics);
 });

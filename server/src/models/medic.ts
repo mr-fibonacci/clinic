@@ -5,7 +5,7 @@ import { Appointment } from './appointment';
 import { getDateTimestamps } from '../utils/date-time';
 import { User, UserAttrs } from './user';
 
-enum MedicType {
+export enum MedicType {
   nurse = 'nurse',
   doctor = 'doctor'
 }

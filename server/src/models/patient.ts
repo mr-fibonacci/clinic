@@ -26,7 +26,7 @@ export class Patient
   };
 
   static remove = async (id: string): Promise<void> => {
-    await Patient.destroy({ where: { UserId: id } });
+    await User.destroy({ where: { id } });
   };
 }
 

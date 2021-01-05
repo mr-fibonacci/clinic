@@ -3,16 +3,16 @@ import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import { User } from '../models/user';
 import {
-  authReqBody,
+  userReqBody,
   validateEmail,
   validatePassword
-} from '../validation-chains/auth-req.body';
+} from '../validation-chains/user-req-body';
 
 const router = Router();
 
 router.post(
   '/signup',
-  ...validateRequestBody(authReqBody),
+  ...validateRequestBody(userReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { id } = await User.signup(email, password);
@@ -24,7 +24,7 @@ router.post(
 
 router.post(
   '/signin',
-  ...validateRequestBody(authReqBody),
+  ...validateRequestBody(userReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { id } = await User.signin(email, password);
@@ -65,7 +65,7 @@ router.post(
 );
 
 router.get('/protected', requireLogin, async (req: Request, res: Response) => {
-  res.send('protected');
+  res.sendStatus(200);
 });
 
 router.get('/users', async (req: Request, res: Response) => {
