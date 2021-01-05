@@ -15,9 +15,9 @@ router.post(
   ...validateRequestBody(authReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    await User.signup(email, password);
+    const { id } = await User.signup(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    req.session!.currentUser = { email };
+    req.session!.currentUser = { email, id };
     res.sendStatus(201);
   }
 );
@@ -27,10 +27,10 @@ router.post(
   ...validateRequestBody(authReqBody),
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    await User.signin(email, password);
+    const { id } = await User.signin(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    req.session!.currentUser = { email };
-    res.send(req.session);
+    req.session!.currentUser = { email, id };
+    res.sendStatus(200);
   }
 );
 
@@ -38,7 +38,7 @@ router.post('/signout', async (req: Request, res: Response) => {
   req.session?.destroy(() => {
     console.log('session destroyed');
   });
-  res.send('signed out');
+  res.sendStatus(200);
 });
 
 router.post(
@@ -47,7 +47,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { email } = req.body;
     await User.sendForgotPasswordEmail(email);
-    res.send('OK');
+    res.sendStatus(200);
   }
 );
 
@@ -60,7 +60,7 @@ router.post(
 
     await User.resetPassword(token, password);
 
-    res.send('OK');
+    res.sendStatus(200);
   }
 );
 

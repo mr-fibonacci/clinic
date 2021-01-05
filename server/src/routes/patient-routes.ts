@@ -8,13 +8,13 @@ router.post('/patients', async (req: Request, res: Response) => {
 
   await Patient.add({ email, password });
 
-  res.send('OK');
+  res.sendStatus(201);
 });
 
 router.delete('/patients/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   await Patient.remove(id);
-  res.send('OK');
+  res.sendStatus(200);
 });
 
 router.get('/patients', async (req: Request, res: Response) => {

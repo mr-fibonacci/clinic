@@ -21,10 +21,9 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await sequelize.sync({ force: true });
+  await Promise.all([sequelize.sync({ force: true }), redisClient.flushall()]);
 });
 
 afterAll(async () => {
-  await sequelize.close();
-  await redisClient.quit();
+  await Promise.all([sequelize.close(), redisClient.quit()]);
 });

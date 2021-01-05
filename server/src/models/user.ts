@@ -12,8 +12,8 @@ interface UserFields {
   password: string;
   firstName: string;
   lastName: string;
-  token: string;
-  tokenExpires: number;
+  token: string | null;
+  tokenExpires: number | null;
 }
 
 export interface UserAttrs {
@@ -27,8 +27,8 @@ export class User extends Model<UserFields, UserAttrs> implements UserFields {
   password!: string;
   firstName!: string;
   lastName!: string;
-  token!: string;
-  tokenExpires!: number;
+  token!: string | null;
+  tokenExpires!: number | null;
 
   static signup = async (email: string, password: string): Promise<User> => {
     let user = await User.findOne({ where: { email } });
@@ -37,11 +37,12 @@ export class User extends Model<UserFields, UserAttrs> implements UserFields {
     return user;
   };
 
-  static signin = async (email: string, password: string): Promise<void> => {
+  static signin = async (email: string, password: string): Promise<User> => {
     const user = await User.findOne({ where: { email } });
     if (!user) throw new NotAuthorizedError('Invalid credentials');
     const passwordsMatch = await Password.compare(password, user.password);
     if (!passwordsMatch) throw new NotAuthorizedError('Invalid credentials');
+    return user;
   };
 
   static sendForgotPasswordEmail = async (email: string): Promise<void> => {
@@ -66,7 +67,7 @@ export class User extends Model<UserFields, UserAttrs> implements UserFields {
     });
     if (!user) throw new NotAuthorizedError('Invalid token');
 
-    user.set({ password, token: undefined, tokenExpires: undefined });
+    user.set({ password, token: null, tokenExpires: null });
     await user.save();
 
     await User.signin(user.email, password);
@@ -98,10 +99,12 @@ export const user = (sequelize: Sequelize) => {
         type: DataTypes.STRING
       },
       token: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: true
       },
       tokenExpires: {
-        type: DataTypes.BIGINT
+        type: DataTypes.BIGINT,
+        allowNull: true
       }
     },
     {
