@@ -122,8 +122,11 @@ export const user = (sequelize: Sequelize) => {
   );
 
   User.hasOne(Patient, { onDelete: 'CASCADE' });
+  Patient.belongsTo(User, { onDelete: 'CASCADE' });
   User.hasOne(Medic, { onDelete: 'CASCADE' });
+  Medic.belongsTo(User, { onDelete: 'CASCADE' });
   User.hasOne(Secretary, { onDelete: 'CASCADE' });
+  Secretary.belongsTo(User, { onDelete: 'CASCADE' });
 
   return User;
 };

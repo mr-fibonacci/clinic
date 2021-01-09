@@ -5,7 +5,7 @@ import {
   CLINIC_OPENING_TIME
 } from '../../custom-types-consts';
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error';
-import { Medic } from '../../models/medic';
+import { Medic, MedicType } from '../../models/medic';
 import { User } from '../../models/user';
 
 describe('create medic', () => {
@@ -86,7 +86,7 @@ describe('create medic', () => {
         .expect(422);
     });
 
-    it('', async () => {
+    it('shiftStart and shiftEnd accidentally swapped', async () => {
       await request(app)
         .post('/medics')
         .send({
@@ -99,5 +99,27 @@ describe('create medic', () => {
         })
         .expect(422);
     });
+  });
+});
+
+describe('remove medic', () => {
+  beforeEach(async () => {
+    await Medic.add({
+      email: 'medic@medic.com',
+      password: 'password',
+      image: 'yay an image!',
+      type: MedicType.doctor,
+      shiftStart: CLINIC_OPENING_TIME,
+      shiftEnd: CLINIC_CLOSING_TIME
+    });
+  });
+
+  it('removes the medic and user (cascade)', async () => {
+    await request(app).delete(`/medics/1`).expect(200);
+
+    const [user, medic] = await Promise.all([User.findOne(), Medic.findOne()]);
+
+    expect(medic).toBeFalsy();
+    expect(user).toBeFalsy();
   });
 });

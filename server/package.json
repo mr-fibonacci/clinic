@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node-dev src/index.ts",
-    "test": "jest --watchAll --runInBand"
+    "test": "jest --watchAll"
   },
   "jest": {
     "verbose": true,

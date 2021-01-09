@@ -72,7 +72,7 @@ export class Medic
   };
 
   static remove = async (id: string): Promise<void> => {
-    await Medic.destroy({ where: { id } });
+    await User.destroy({ where: { id } });
   };
 
   generateAppointments = async (date: Date): Promise<void> => {
