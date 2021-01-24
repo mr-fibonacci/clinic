@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-import { MedicType } from '../models/medic';
+import { MedicType } from '../entity/medic';
 import {
   CLINIC_CLOSING_TIME,
   CLINIC_OPENING_TIME

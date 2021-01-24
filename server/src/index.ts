@@ -1,16 +1,16 @@
+import { createConnection } from 'typeorm';
 import app from './app';
-import { sequelize } from './config/pg-config';
 import './augmented-types';
 
 const start = async () => {
   try {
-    await sequelize.authenticate();
+    await createConnection();
     console.log('server connected to db successfully');
   } catch (err) {
     console.error('server startup interrupted', err);
   }
-  app.listen(process.env.PORT, () => {
-    console.log(`app running on port ${process.env.PORT}`);
+  app.listen(3000, () => {
+    console.log(`app running on port ${3000}`);
   });
 };
 

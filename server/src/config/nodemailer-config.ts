@@ -5,7 +5,7 @@ dotenv.config();
 const { EMAIL_USER, EMAIL_PASS, SRV_HOST } = process.env;
 
 const smtpTransport = nodemailer.createTransport({
-  service: 'Gmail',
+  service: 'gmail',
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS
@@ -29,6 +29,9 @@ export const resetMailOptions = (
     to: email,
     from: EMAIL_USER,
     subject: 'e-clinic account password reset',
-    text: `You received this message because password reset for this account has been requested. To complete the process, please click on the following link: ${SRV_HOST}/resetpassword/${token}. If it wasn't you and you feel like someone is just messing with you, please ignore this email.`
+    text: `You received this message because password reset for this account has been requested.
+    To complete the process, please click on the following link:
+    ${SRV_HOST}/resetpassword/${token}
+    If it wasn't you and you feel like someone is just messing with you, please ignore this email.`
   };
 };

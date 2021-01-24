@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express';
 import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { validateRequestBody } from '../middlewares/validate-request-body';
-import { Medic } from '../models/medic';
+import { Medic } from '../entity/medic';
 import { medicReqBody } from '../validation-chains/medic-req-body';
+import { getRepository } from 'typeorm';
 
 const router = Router();
 
@@ -16,11 +17,11 @@ router.post(
   }
 );
 
-router.put('/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  await Medic.edit(id, req.body);
-  res.sendStatus(200);
-});
+// router.put('/:id', async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   await Medic.edit(id, req.body);
+//   res.sendStatus(200);
+// });
 
 router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -28,15 +29,16 @@ router.delete('/:id', async (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const medic = await Medic.findOne({ where: { id } });
-  if (!medic) throw new ResourceNotFoundError('medic');
-  res.send(medic);
-});
+// router.get('/:id', async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const medic = await Medic.findOne({ where: { id } });
+//   if (!medic) throw new ResourceNotFoundError('medic');
+//   res.send(medic);
+// });
 
 router.get('/', async (req: Request, res: Response) => {
-  const medics = await Medic.findAll();
+  const medicRepo = getRepository(Medic);
+  const medics = await medicRepo.find({ relations: ['user'] });
   res.send(medics);
 });
 

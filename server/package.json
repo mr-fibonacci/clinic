@@ -49,7 +49,7 @@
     "ioredis": "^4.19.4",
     "nodemailer": "^6.4.17",
     "pg": "^8.5.1",
-    "pg-hstore": "^2.3.3",
-    "sequelize": "^6.3.5"
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.30"
   }
 }

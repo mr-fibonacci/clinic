@@ -4,7 +4,7 @@ declare global {
     interface Session {
       currentUser: {
         email: string;
-        id: number;
+        id: string;
       };
     }
   }

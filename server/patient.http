@@ -2,7 +2,7 @@ POST http://localhost:3000/patients
 Content-Type: application/json
 
 {
-  "email": "patient1@patient.com",
+  "email": "adamlapinski1@gmail.com",
   "password": "pass"
 }
 ###
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 }
 ###
-DELETE http://localhost:3000/patients/1
+DELETE http://localhost:3000/patients/5348f2cd-f7cf-41d4-a5b8-a00eca05af16
 ###
 GET http://localhost:3000/patients/1
 ###

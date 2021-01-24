@@ -2,7 +2,7 @@ POST http://localhost:3000/medics
 Content-Type: application/json
 
 {
-  "email": "doctor1@doctor.com",
+  "email": "d1@d.com",
   "password": "pass",
   "image": "yay an image",
   "type": "doctor",
@@ -10,7 +10,7 @@ Content-Type: application/json
   "shiftEnd": 11
 }
 ###
-PUT http://localhost:3000/medics/1
+PUT http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
 Content-Type: application/json
 
 {
@@ -20,8 +20,8 @@ Content-Type: application/json
   "id": 456
 }
 ###
-DELETE http://localhost:3000/medics/1
+DELETE http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
 ###
-GET http://localhost:3000/medics/1
+GET http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
 ###
 GET http://localhost:3000/medics

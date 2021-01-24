@@ -1,7 +1,9 @@
 import { Request, Response, Router } from 'express';
+import { getRepository } from 'typeorm';
+import { User } from '../entity/user';
 import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
-import { User } from '../models/user';
+// import { User } from '../models/user';
 import {
   userReqBody,
   validateEmail,
@@ -16,6 +18,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { id } = await User.signup(email, password);
+    // const { id } = await User.signup(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     req.session!.currentUser = { email, id };
     res.sendStatus(201);
@@ -59,17 +62,18 @@ router.post(
     const { password } = req.body;
 
     await User.resetPassword(token, password);
-
     res.sendStatus(200);
   }
 );
 
 router.get('/protected', requireLogin, async (req: Request, res: Response) => {
+  console.log('currentUser:', req.session?.currentUser);
   res.sendStatus(200);
 });
 
 router.get('/users', async (req: Request, res: Response) => {
-  const users = await User.findAll();
+  const userRepo = getRepository(User);
+  const users = await userRepo.find({ relations: ['patient', 'medic'] });
   res.send(users);
 });
 

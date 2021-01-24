@@ -1,4 +1,6 @@
-GET http://localhost:3000/appointments/initialize
+POST http://localhost:3000/appointments/book/72a0a7d9-7e83-4045-b41c-c12fd13e623f
+###
+POST http://localhost:3000/appointments/cancel/72a0a7d9-7e83-4045-b41c-c12fd13e623f
 ###
 GET http://localhost:3000/appointments/append
 ###
