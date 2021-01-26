@@ -1,7 +1,8 @@
 import request from 'supertest';
 import app from '../../app';
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error';
-import { User } from '../../models/user';
+import { User } from '../../entity/user';
+import { getRepository } from 'typeorm';
 
 describe('/signup', () => {
   const url = '/users/signup';
@@ -12,11 +13,11 @@ describe('/signup', () => {
       .send({ email: 'user@user.com', password: 'password' })
       .expect(201);
 
-    const user = await User.findOne({ raw: true });
+    const userRepo = getRepository(User);
+    const user = await userRepo.findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
     expect('password'.length).toBeLessThan(user.password.length);
-
     expect(res.get('Set-Cookie')).toBeDefined();
   });
 
@@ -142,7 +143,8 @@ describe('/forgotpassword', () => {
   it('returns 200, sets token and tokenExpires', async () => {
     await request(app).post(url).send({ email: 'user@user.com' }).expect(200);
 
-    const user = await User.findOne();
+    const userRepo = getRepository(User);
+    const user = await userRepo.findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
     expect(user.token).toBeDefined();
@@ -156,8 +158,11 @@ describe('/resetpassword/:token', () => {
   beforeEach(async () => {
     await User.signup('user@user.com', 'password');
     await User.sendForgotPasswordEmail('user@user.com');
-    const user = await User.findOne();
-    if (!user) throw new ResourceNotFoundError('user');
+
+    const userRepo = getRepository(User);
+    const user = await userRepo.findOne();
+
+    if (!user?.token) throw new ResourceNotFoundError('user');
     token = user.token;
   });
 
@@ -167,11 +172,10 @@ describe('/resetpassword/:token', () => {
       .send({ password: 'anewpass' })
       .expect(200);
 
-    const user = await User.findOne();
+    const userRepo = getRepository(User);
+    const user = await userRepo.findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
-    // sequelize instance.changed('field') bug
-    // expect(user.changed('password')).toBeTruthy();
     expect(user.token).toBeFalsy();
     expect(user.tokenExpires).toBeFalsy();
 

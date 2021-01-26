@@ -49,7 +49,7 @@ export class Medic {
   @OneToMany(() => Appointment, (appointment) => appointment.medic)
   appointments!: Appointment[];
 
-  static add = async (medicAttrs: MedicAttrs): Promise<void> => {
+  static add = async (medicAttrs: MedicAttrs): Promise<Medic> => {
     const { email, password, type, image, shiftStart, shiftEnd } = medicAttrs;
     const user = await User.signup(email, password);
 
@@ -57,8 +57,11 @@ export class Medic {
 
     const medicRepo = getRepository(Medic);
     const medic = medicRepo.create({ type, image, shiftStart, shiftEnd, user });
-    await medicRepo.save(medic);
+    const createdMedic = await medicRepo.save(medic);
+
     await medic.generateAppointments(0, SCHEDULE_DAYS_AHEAD);
+
+    return createdMedic;
   };
 
   static edit = async (medicAttrs: Partial<MedicAttrs>): Promise<void> => {
@@ -75,7 +78,7 @@ export class Medic {
     const user = await userRepo.findOne(userId);
     if (!user) throw new ResourceNotFoundError('user');
 
-    Promise.all([medicRepo.remove(medic), userRepo.remove(user)]);
+    await Promise.all([medicRepo.remove(medic), userRepo.remove(user)]);
   };
 
   generateAppointments = async (
@@ -97,7 +100,7 @@ export class Medic {
       }));
     });
 
-    Promise.all(
+    await Promise.all(
       daysAppointments.map((dayAppointments) => {
         return appointmentRepo.insert(dayAppointments);
       })

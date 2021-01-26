@@ -1,44 +1,26 @@
 import request from 'supertest';
-import { Sequelize } from 'sequelize';
-import { redisClient } from '../config/redis-config';
-import { appointment } from '../models/appointment';
-import { medic } from '../models/medic';
-import { patient } from '../models/patient';
-import { secretary } from '../models/secretary';
-import { user } from '../models/user';
+import { Connection, createConnection } from 'typeorm';
+// import { redisClient } from '../config/redis-config';
+
 import app from '../app';
+import { UserAttrs } from '../entity/user';
 
-const sequelize = new Sequelize(
-  'postgres://postgres:pass@localhost:5432/postgres',
-  { logging: false }
-);
-
+let connection: Connection;
 beforeAll(async () => {
-  await sequelize.authenticate();
-  appointment(sequelize);
-  medic(sequelize);
-  patient(sequelize);
-  secretary(sequelize);
-  user(sequelize);
+  connection = await createConnection();
 });
 
 beforeEach(async () => {
-  appointment(sequelize);
-  medic(sequelize);
-  patient(sequelize);
-  secretary(sequelize);
-  user(sequelize);
-  await Promise.all([sequelize.sync({ force: true }), redisClient.flushall()]);
+  await connection.synchronize(true);
 });
 
 afterAll(async () => {
-  await Promise.all([sequelize.close(), redisClient.quit()]);
+  await connection.close();
 });
 
-export const signInCookie = async (
-  email: string,
-  password: string
-): Promise<string> => {
+export const signInCookie = async (userAttrs: UserAttrs): Promise<string> => {
+  const { email, password } = userAttrs;
+
   const response = await request(app)
     .post('/users/signin')
     .send({ email, password })

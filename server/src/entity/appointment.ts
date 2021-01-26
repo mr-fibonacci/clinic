@@ -34,7 +34,7 @@ export class Appointment {
     const medicRepo = getRepository(Medic);
     const medics = await medicRepo.find();
 
-    Promise.all(
+    await Promise.all(
       medics.map((medic) =>
         medic.generateAppointments(SCHEDULE_DAYS_AHEAD, SCHEDULE_DAYS_AHEAD + 1)
       )

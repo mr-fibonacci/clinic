@@ -8,7 +8,9 @@ import {
 } from 'typeorm';
 import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { Appointment } from './appointment';
-import { User } from './user';
+import { User, UserAttrs } from './user';
+
+type PatientAttrs = UserAttrs;
 
 @Entity()
 export class Patient {
@@ -22,12 +24,12 @@ export class Patient {
   @OneToMany(() => Appointment, (appointment) => appointment?.patient)
   appointments?: Appointment[];
 
-  static add = async (email: string, password: string): Promise<User> => {
-    const user = await User.signup(email, password);
+  static add = async (patientAttrs: PatientAttrs): Promise<Patient> => {
+    const user = await User.signup(patientAttrs.email, patientAttrs.password);
     const patientRepo = getRepository(Patient);
     const patient = patientRepo.create({ user });
-    await patientRepo.save(patient);
-    return user;
+    const createdPatient = await patientRepo.save(patient);
+    return createdPatient;
   };
 
   static remove = async (userId: string): Promise<void> => {
@@ -37,7 +39,7 @@ export class Patient {
     const patient = await patientRepo.findOne({
       where: { user: { id: userId } }
     });
-    if (!patient) throw new ResourceNotFoundError('user');
+    if (!patient) throw new ResourceNotFoundError('patient');
 
     const user = await userRepo.findOne(userId);
     if (!user) throw new ResourceNotFoundError('user');

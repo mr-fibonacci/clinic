@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   getRepository,
-  LessThan,
   OneToOne,
   MoreThan
 } from 'typeorm';

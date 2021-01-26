@@ -3,7 +3,6 @@ import { getRepository } from 'typeorm';
 import { User } from '../entity/user';
 import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
-// import { User } from '../models/user';
 import {
   userReqBody,
   validateEmail,
@@ -18,7 +17,6 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { id } = await User.signup(email, password);
-    // const { id } = await User.signup(email, password);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     req.session!.currentUser = { email, id };
     res.sendStatus(201);
@@ -71,7 +69,7 @@ router.get('/protected', requireLogin, async (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-router.get('/users', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   const userRepo = getRepository(User);
   const users = await userRepo.find({ relations: ['patient', 'medic'] });
   res.send(users);

@@ -1,4 +1,4 @@
-POST http://localhost:3000/signup
+POST http://localhost:3000/users/signup
 Content-Type: application/json
 
 {
@@ -6,7 +6,7 @@ Content-Type: application/json
   "password": "passwefasd"
 }
 ###
-POST http://localhost:3000/signin
+POST http://localhost:3000/users/signin
 Content-Type: application/json
 
 {
@@ -14,22 +14,22 @@ Content-Type: application/json
   "password": "pass"
 }
 ###
-POST http://localhost:3000/signout
+POST http://localhost:3000/users/signout
 ###
-POST http://localhost:3000/forgotpassword
+POST http://localhost:3000/users/forgotpassword
 Content-Type: application/json
 
 {
   "email": "adamlapinski1@gmail.com"
 }
 ###
-POST http://localhost:3000/resetpassword/a8cd513cf1a7eaeb83a40aa19d27816897538fd9
+POST http://localhost:3000/users/resetpassword/a8cd513cf1a7eaeb83a40aa19d27816897538fd9
 Content-Type: application/json
 
 {
   "password": "yaynewpassword"
 }
 ###
-GET http://localhost:3000/protected
+GET http://localhost:3000/users/protected
 ###
 GET http://localhost:3000/users

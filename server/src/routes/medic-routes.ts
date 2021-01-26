@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express';
-import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import { Medic } from '../entity/medic';
 import { medicReqBody } from '../validation-chains/medic-req-body';

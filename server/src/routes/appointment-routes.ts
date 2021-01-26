@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { Appointment } from '../entity/appointment';
 import { Patient } from '../entity/patient';
-// import { Op } from 'sequelize';
 import { NotAuthorizedError } from '../errors/not-authorized-error';
 import { hasRole } from '../middlewares/has-role';
 

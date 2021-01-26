@@ -5,8 +5,9 @@ import {
   CLINIC_OPENING_TIME
 } from '../../custom-types-consts';
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error';
-import { Medic, MedicType } from '../../models/medic';
-import { User } from '../../models/user';
+import { Medic } from '../../entity/medic';
+import { User } from '../../entity/user';
+import { getRepository } from 'typeorm';
 
 describe('create medic', () => {
   it('provided valid values, returns 201, user and medic created', async () => {
@@ -22,11 +23,16 @@ describe('create medic', () => {
       })
       .expect(201);
 
-    const [user, medic] = await Promise.all([User.findOne(), Medic.findOne()]);
+    const userRepo = getRepository(User);
+    const medicRepo = getRepository(Medic);
+    const [user, medic] = await Promise.all([
+      userRepo.findOne(),
+      medicRepo.findOne({ relations: ['user'] })
+    ]);
 
     if (!user) throw new ResourceNotFoundError('user');
     if (!medic) throw new ResourceNotFoundError('medic');
-    expect(medic.UserId).toEqual(user.id);
+    expect(medic.user.id).toEqual(user.id);
   });
 
   describe('throws 422 if:', () => {
@@ -58,7 +64,7 @@ describe('create medic', () => {
         .expect(422);
     });
 
-    it('shift starting too early', async () => {
+    it('shift starting earlier than CLINIC_OPENING_TIME', async () => {
       await request(app)
         .post('/medics')
         .send({
@@ -72,7 +78,7 @@ describe('create medic', () => {
         .expect(422);
     });
 
-    it('shift ending too late', async () => {
+    it('shift ending later than CLINIC_CLOSING_TIME', async () => {
       await request(app)
         .post('/medics')
         .send({
@@ -86,7 +92,7 @@ describe('create medic', () => {
         .expect(422);
     });
 
-    it('shiftStart and shiftEnd accidentally swapped', async () => {
+    it('shiftStart and shiftEnd hours accidentally swapped', async () => {
       await request(app)
         .post('/medics')
         .send({
@@ -102,24 +108,35 @@ describe('create medic', () => {
   });
 });
 
-describe('remove medic', () => {
-  beforeEach(async () => {
-    await Medic.add({
-      email: 'medic@medic.com',
-      password: 'password',
-      image: 'yay an image!',
-      type: MedicType.doctor,
-      shiftStart: CLINIC_OPENING_TIME,
-      shiftEnd: CLINIC_CLOSING_TIME
-    });
-  });
+// A FK CONSTRAINT ON APPOINTMENTWILL PROBABLY HAVE TO RETIRE A MEDIC, NOT REMOVE AS THAT WOULD LEAVE A HOLE IN APPOINTMENTS
+// describe('remove medic', () => {
+//   beforeEach(async () => {
+//     await Medic.add({
+//       email: 'medic@medic.com',
+//       password: 'password',
+//       image: 'yay an image!',
+//       type: MedicType.doctor,
+//       shiftStart: CLINIC_OPENING_TIME,
+//       shiftEnd: CLINIC_CLOSING_TIME
+//     });
+//   });
 
-  it('removes the medic and user (cascade)', async () => {
-    await request(app).delete(`/medics/1`).expect(200);
+//   it('removes the medic and user (cascade)', async () => {
+//     const userRepo = getRepository(User);
+//     const medicRepo = getRepository(Medic);
+//     let [user, medic] = await Promise.all([
+//       userRepo.findOne(),
+//       medicRepo.findOne({ relations: ['user'] })
+//     ]);
 
-    const [user, medic] = await Promise.all([User.findOne(), Medic.findOne()]);
+//     await request(app).delete(`/medics/${user?.id}`).expect(200);
 
-    expect(medic).toBeFalsy();
-    expect(user).toBeFalsy();
-  });
-});
+//     [user, medic] = await Promise.all([
+//       userRepo.findOne(),
+//       medicRepo.findOne()
+//     ]);
+
+//     expect(medic).toBeFalsy();
+//     expect(user).toBeFalsy();
+//   });
+// });

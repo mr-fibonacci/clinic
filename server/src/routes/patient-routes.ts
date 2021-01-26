@@ -1,15 +1,13 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
 import { Patient } from '../entity/patient';
-import { User } from '../entity/user';
-// import { Patient } from '../models/patient';
 
 const router = Router();
 
 router.post('/', async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await Patient.add(email, password);
+  const user = await Patient.add({ email, password });
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   req.session!.currentUser = { email, id: user.id };
   res.sendStatus(201);

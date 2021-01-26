@@ -33,7 +33,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello from clinic API!');
 });
 
-app.use(userRoutes);
+app.use('/users', userRoutes);
 app.use('/patients', patientRoutes);
 app.use('/medics', medicRoutes);
 app.use('/appointments', appointmentRoutes);
