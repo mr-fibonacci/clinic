@@ -70,8 +70,9 @@ router.get('/protected', requireLogin, async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
-  const userRepo = getRepository(User);
-  const users = await userRepo.find({ relations: ['patient', 'medic'] });
+  const users = await getRepository(User).find({
+    relations: ['patient', 'medic']
+  });
   res.send(users);
 });
 

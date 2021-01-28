@@ -4,43 +4,28 @@ import {
   getRepository,
   JoinColumn,
   OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn
+  OneToOne
 } from 'typeorm';
 import { SCHEDULE_DAYS_AHEAD } from '../custom-types-consts';
 import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { getDatesRange, getDateTimestamps } from '../utils/date-time';
 import { Appointment } from './appointment';
-import { User, UserAttrs } from './user';
+import { Employee, EmployeeAttrs } from './employee';
+import { User } from './user';
 
 export enum MedicType {
   nurse = 'nurse',
   doctor = 'doctor'
 }
 
-type MedicAttrs = UserAttrs & {
+type MedicAttrs = EmployeeAttrs & {
   type: MedicType;
-  image: string;
-  shiftStart: number;
-  shiftEnd: number;
 };
 
 @Entity()
-export class Medic {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
-
+export class Medic extends Employee {
   @Column()
   type!: MedicType;
-
-  @Column()
-  image!: string;
-
-  @Column()
-  shiftStart!: number;
-
-  @Column()
-  shiftEnd!: number;
 
   @OneToOne(() => User, (user) => user.medic)
   @JoinColumn()
@@ -55,30 +40,37 @@ export class Medic {
 
     // handle image upload to cloudinary
 
-    const medicRepo = getRepository(Medic);
-    const medic = medicRepo.create({ type, image, shiftStart, shiftEnd, user });
-    const createdMedic = await medicRepo.save(medic);
+    const medic = getRepository(Medic).create({
+      type,
+      image,
+      shiftStart,
+      shiftEnd,
+      user
+    });
+    const createdMedic = await getRepository(Medic).save(medic);
 
     await medic.generateAppointments(0, SCHEDULE_DAYS_AHEAD);
 
     return createdMedic;
   };
 
-  static edit = async (medicAttrs: Partial<MedicAttrs>): Promise<void> => {
-    // if there's an image, persist to cloudinary FIRST, then delete the old one
-  };
+  // static edit = async (medicAttrs: Partial<MedicAttrs>): Promise<void> => {
+  // if there's an image, persist to cloudinary FIRST, then delete the old one
+  // };
 
   static remove = async (userId: string): Promise<void> => {
-    const medicRepo = getRepository(Medic);
-    const userRepo = getRepository(User);
-
-    const medic = await medicRepo.findOne({ where: { user: { id: userId } } });
+    const medic = await getRepository(Medic).findOne({
+      where: { user: { id: userId } }
+    });
     if (!medic) throw new ResourceNotFoundError('user');
 
-    const user = await userRepo.findOne(userId);
+    const user = await getRepository(User).findOne(userId);
     if (!user) throw new ResourceNotFoundError('user');
 
-    await Promise.all([medicRepo.remove(medic), userRepo.remove(user)]);
+    await Promise.all([
+      getRepository(Medic).remove(medic),
+      getRepository(User).remove(user)
+    ]);
   };
 
   generateAppointments = async (
@@ -87,7 +79,6 @@ export class Medic {
   ): Promise<void> => {
     const { shiftStart, shiftEnd } = this;
     const dates = getDatesRange(daysAhead1, daysAhead2);
-    const appointmentRepo = getRepository(Appointment);
 
     const daysTimestamps = dates.map((date) =>
       getDateTimestamps(date, shiftStart, shiftEnd)
@@ -102,7 +93,7 @@ export class Medic {
 
     await Promise.all(
       daysAppointments.map((dayAppointments) => {
-        return appointmentRepo.insert(dayAppointments);
+        return getRepository(Appointment).insert(dayAppointments);
       })
     );
   };

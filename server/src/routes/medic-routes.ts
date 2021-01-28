@@ -36,8 +36,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 // });
 
 router.get('/', async (req: Request, res: Response) => {
-  const medicRepo = getRepository(Medic);
-  const medics = await medicRepo.find({ relations: ['user'] });
+  const medics = await getRepository(Medic).find({ relations: ['user'] });
   res.send(medics);
 });
 

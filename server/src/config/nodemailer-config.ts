@@ -2,13 +2,13 @@ import nodemailer, { SendMailOptions } from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const { EMAIL_USER, EMAIL_PASS, SRV_HOST } = process.env;
+const { ADMIN_EMAIL, ADMIN_PASS, SRV_HOST } = process.env;
 
 const smtpTransport = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS
+    user: ADMIN_EMAIL,
+    pass: ADMIN_PASS
   }
 });
 
@@ -27,7 +27,7 @@ export const resetMailOptions = (
 ): SendMailOptions => {
   return {
     to: email,
-    from: EMAIL_USER,
+    from: ADMIN_EMAIL,
     subject: 'e-clinic account password reset',
     text: `You received this message because password reset for this account has been requested.
     To complete the process, please click on the following link:

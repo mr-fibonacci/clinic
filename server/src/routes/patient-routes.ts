@@ -20,8 +20,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
-  const patientRepo = getRepository(Patient);
-  const patients = await patientRepo.find({ relations: ['user'] });
+  const patients = await getRepository(Patient).find({ relations: ['user'] });
   res.send(patients);
 });
 

@@ -12,11 +12,9 @@ describe('add patient', () => {
       .send({ email: 'patient@patient.com', password: 'password' })
       .expect(201);
 
-    const userRepo = getRepository(User);
-    const patientRepo = getRepository(Patient);
     const [user, patient] = await Promise.all([
-      userRepo.findOne(),
-      patientRepo.findOne({ relations: ['user'] })
+      getRepository(User).findOne(),
+      getRepository(Patient).findOne({ relations: ['user'] })
     ]);
 
     if (!user) throw new ResourceNotFoundError('user');
@@ -31,18 +29,15 @@ describe('remove patient', () => {
   });
 
   it('deletes the patient and user (cascade)', async () => {
-    const userRepo = getRepository(User);
-    const patientRepo = getRepository(Patient);
-
     let [user, patient] = await Promise.all([
-      userRepo.findOne(),
-      patientRepo.findOne()
+      getRepository(User).findOne(),
+      getRepository(Patient).findOne()
     ]);
     await request(app).delete(`/patients/${user?.id}`).expect(200);
 
     [user, patient] = await Promise.all([
-      userRepo.findOne(),
-      patientRepo.findOne()
+      getRepository(User).findOne(),
+      getRepository(Patient).findOne()
     ]);
 
     expect(patient).toBeFalsy();

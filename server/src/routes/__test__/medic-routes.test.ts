@@ -23,11 +23,9 @@ describe('create medic', () => {
       })
       .expect(201);
 
-    const userRepo = getRepository(User);
-    const medicRepo = getRepository(Medic);
     const [user, medic] = await Promise.all([
-      userRepo.findOne(),
-      medicRepo.findOne({ relations: ['user'] })
+      getRepository(User).findOne(),
+      getRepository(Medic).findOne({ relations: ['user'] })
     ]);
 
     if (!user) throw new ResourceNotFoundError('user');
@@ -122,18 +120,16 @@ describe('create medic', () => {
 //   });
 
 //   it('removes the medic and user (cascade)', async () => {
-//     const userRepo = getRepository(User);
-//     const medicRepo = getRepository(Medic);
 //     let [user, medic] = await Promise.all([
-//       userRepo.findOne(),
-//       medicRepo.findOne({ relations: ['user'] })
+//       getRepository(User).findOne(),
+//       getRepository(Medic).findOne({ relations: ['user'] })
 //     ]);
 
 //     await request(app).delete(`/medics/${user?.id}`).expect(200);
 
 //     [user, medic] = await Promise.all([
-//       userRepo.findOne(),
-//       medicRepo.findOne()
+//       getRepository(User).findOne(),
+//       getRepository(Medic).findOne()
 //     ]);
 
 //     expect(medic).toBeFalsy();

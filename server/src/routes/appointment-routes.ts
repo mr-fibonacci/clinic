@@ -36,8 +36,7 @@ router.post('/cancel/:id', async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
-  const appointmentRepo = getRepository(Appointment);
-  const appointments = await appointmentRepo.find({
+  const appointments = await getRepository(Appointment).find({
     relations: ['medic', 'patient']
   });
   res.send(appointments);

@@ -26,24 +26,23 @@ export class Patient {
 
   static add = async (patientAttrs: PatientAttrs): Promise<Patient> => {
     const user = await User.signup(patientAttrs.email, patientAttrs.password);
-    const patientRepo = getRepository(Patient);
-    const patient = patientRepo.create({ user });
-    const createdPatient = await patientRepo.save(patient);
+    const patient = getRepository(Patient).create({ user });
+    const createdPatient = await getRepository(Patient).save(patient);
     return createdPatient;
   };
 
   static remove = async (userId: string): Promise<void> => {
-    const patientRepo = getRepository(Patient);
-    const userRepo = getRepository(User);
-
-    const patient = await patientRepo.findOne({
+    const patient = await getRepository(Patient).findOne({
       where: { user: { id: userId } }
     });
     if (!patient) throw new ResourceNotFoundError('patient');
 
-    const user = await userRepo.findOne(userId);
+    const user = await getRepository(User).findOne(userId);
     if (!user) throw new ResourceNotFoundError('user');
 
-    await Promise.all([patientRepo.remove(patient), userRepo.remove(user)]);
+    await Promise.all([
+      getRepository(Patient).remove(patient),
+      getRepository(User).remove(user)
+    ]);
   };
 }

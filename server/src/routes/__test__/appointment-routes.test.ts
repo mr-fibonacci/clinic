@@ -4,12 +4,11 @@ import { Appointment } from '../../entity/appointment';
 import { Medic, MedicType } from '../../entity/medic';
 import { Patient } from '../../entity/patient';
 import { signInCookie } from '../../test/setup';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 let medic: Medic,
   patient1: Patient,
   patient2: Patient,
-  appointmentRepo: Repository<Appointment>,
   appointment: Appointment | undefined,
   cookie1: string,
   cookie2: string;
@@ -34,8 +33,6 @@ beforeEach(async () => {
     })
   ]);
 
-  appointmentRepo = getRepository(Appointment);
-
   [cookie1, cookie2, appointment] = await Promise.all([
     signInCookie({
       email: 'patient1@patient.com',
@@ -45,12 +42,12 @@ beforeEach(async () => {
       email: 'patient2@patient.com',
       password: 'pass'
     }),
-    appointmentRepo.findOne()
+    getRepository(Appointment).findOne()
   ]);
 });
 
 it('generates medic appointments upon creation', async () => {
-  const appointments = await appointmentRepo.find();
+  const appointments = await getRepository(Appointment).find();
   expect(appointments.length).toBe(2 * 4 * 10);
 });
 
@@ -60,7 +57,7 @@ it('a patient can book an available appointment', async () => {
     .set('Cookie', cookie1)
     .expect(201);
 
-  appointment = await appointmentRepo.findOne(appointment, {
+  appointment = await getRepository(Appointment).findOne(appointment, {
     relations: ['medic', 'patient']
   });
 
@@ -84,7 +81,7 @@ it(`a patient can't book an appointment that has already been booked by himself 
     .set('Cookie', cookie2)
     .expect(403);
 
-  appointment = await appointmentRepo.findOne(appointment, {
+  appointment = await getRepository(Appointment).findOne(appointment, {
     relations: ['medic', 'patient']
   });
 
@@ -103,7 +100,7 @@ it(`patient can cancel an appointment he booked`, async () => {
     .set('Cookie', cookie1)
     .expect(200);
 
-  appointment = await appointmentRepo.findOne(appointment?.id, {
+  appointment = await getRepository(Appointment).findOne(appointment?.id, {
     relations: ['medic', 'patient']
   });
 
@@ -122,7 +119,7 @@ it(`patient can't cancel an appointment he didn't book`, async () => {
     .set('Cookie', cookie2)
     .expect(403);
 
-  appointment = await appointmentRepo.findOne(appointment?.id, {
+  appointment = await getRepository(Appointment).findOne(appointment?.id, {
     relations: ['medic', 'patient']
   });
 

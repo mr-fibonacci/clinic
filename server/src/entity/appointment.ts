@@ -31,8 +31,7 @@ export class Appointment {
   medic!: Medic;
 
   static append = async (): Promise<void> => {
-    const medicRepo = getRepository(Medic);
-    const medics = await medicRepo.find();
+    const medics = await getRepository(Medic).find();
 
     await Promise.all(
       medics.map((medic) =>
@@ -45,14 +44,12 @@ export class Appointment {
     userId: string,
     appointmentId: string
   ): Promise<void> => {
-    const appointmentRepo = getRepository(Appointment);
-    const patientRepo = getRepository(Patient);
-    const patient = await patientRepo.findOne({
+    const patient = await getRepository(Patient).findOne({
       where: { user: { id: userId } }
     });
     if (!patient) throw new ResourceNotFoundError('Patient');
 
-    const appointment = await appointmentRepo.update(
+    const appointment = await getRepository(Appointment).update(
       {
         id: appointmentId,
         patient: null
@@ -69,14 +66,12 @@ export class Appointment {
     userId: string,
     appointmentId: string
   ): Promise<void> => {
-    const appointmentRepo = getRepository(Appointment);
-    const patientRepo = getRepository(Patient);
-    const patient = await patientRepo.findOne({
+    const patient = await getRepository(Patient).findOne({
       where: { user: { id: userId } }
     });
     if (!patient) throw new ResourceNotFoundError('Patient');
 
-    const appointment = await appointmentRepo.update(
+    const appointment = await getRepository(Appointment).update(
       {
         id: appointmentId,
         patient

@@ -13,8 +13,7 @@ describe('/signup', () => {
       .send({ email: 'user@user.com', password: 'password' })
       .expect(201);
 
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOne();
+    const user = await getRepository(User).findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
     expect('password'.length).toBeLessThan(user.password.length);
@@ -143,8 +142,7 @@ describe('/forgotpassword', () => {
   it('returns 200, sets token and tokenExpires', async () => {
     await request(app).post(url).send({ email: 'user@user.com' }).expect(200);
 
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOne();
+    const user = await getRepository(User).findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
     expect(user.token).toBeDefined();
@@ -159,8 +157,7 @@ describe('/resetpassword/:token', () => {
     await User.signup('user@user.com', 'password');
     await User.sendForgotPasswordEmail('user@user.com');
 
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOne();
+    const user = await getRepository(User).findOne();
 
     if (!user?.token) throw new ResourceNotFoundError('user');
     token = user.token;
@@ -172,8 +169,7 @@ describe('/resetpassword/:token', () => {
       .send({ password: 'anewpass' })
       .expect(200);
 
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOne();
+    const user = await getRepository(User).findOne();
     if (!user) throw new ResourceNotFoundError('user');
 
     expect(user.token).toBeFalsy();
