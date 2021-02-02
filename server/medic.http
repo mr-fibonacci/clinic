@@ -7,21 +7,24 @@ Content-Type: application/json
   "image": "yay an image",
   "type": "doctor",
   "shiftStart": 9,
-  "shiftEnd": 11
+  "shiftEnd": 11,
+  "firstName": "Doc",
+  "lastName": "McDoctorface"
 }
 ###
-PUT http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
+GET http://localhost:3000/medics/3317b587-1241-4f9b-a065-bfbdf528c448
+###
+PATCH http://localhost:3000/medics/eaa79ee5-8e47-4d70-a18f-90fb0440444f
 Content-Type: application/json
 
 {
   "image": "yay a newer image",
   "shiftEnd": 4,
-  "UserId": 123,
-  "id": 456
+  "email": "yay@yay.com",
+  "firstName": "trololo",
+  "token": "yay look a token!"
 }
 ###
-DELETE http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
-###
-GET http://localhost:3000/medics/e8a36fd1-c8e0-4d2a-9048-609a46ef7ebe
+DELETE http://localhost:3000/medics/2a4b4597-f61b-434b-987a-f112e003c7dc
 ###
 GET http://localhost:3000/medics

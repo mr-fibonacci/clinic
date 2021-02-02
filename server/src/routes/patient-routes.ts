@@ -5,18 +5,34 @@ import { Patient } from '../entity/patient';
 const router = Router();
 
 router.post('/', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const patient = await Patient.add(req.body);
+  const { email, id } = patient.user;
 
-  const user = await Patient.add({ email, password });
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  req.session!.currentUser = { email, id: user.id };
+  if (!req.session!.currentUser) req.session!.currentUser = { email, id };
   res.sendStatus(201);
+});
+
+router.put('/:id', async (req: Request, res: Response) => {
+  const { newPassword } = req.body;
+  const { id } = req.params;
+
+  await Patient.edit(id, req.body, newPassword);
+  res.sendStatus(200);
 });
 
 router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   await Patient.remove(id);
   res.sendStatus(200);
+});
+
+router.get('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const patient = await getRepository(Patient).findOne({
+    where: { user: { id } }
+  });
+  res.send(patient);
 });
 
 router.get('/', async (req: Request, res: Response) => {

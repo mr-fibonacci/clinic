@@ -21,15 +21,21 @@ beforeEach(async () => {
       image: 'yay an image!',
       type: MedicType.doctor,
       shiftStart: 11,
-      shiftEnd: 13
+      shiftEnd: 13,
+      firstName: 'John',
+      lastName: 'McDoctorface'
     }),
     Patient.add({
       email: 'patient1@patient.com',
-      password: 'pass'
+      password: 'pass',
+      firstName: 'Tom',
+      lastName: 'Sickmann'
     }),
     Patient.add({
       email: 'patient2@patient.com',
-      password: 'pass'
+      password: 'pass',
+      firstName: 'Joe',
+      lastName: 'Idontfeelsogood'
     })
   ]);
 

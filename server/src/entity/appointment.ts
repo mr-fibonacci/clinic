@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { SCHEDULE_DAYS_AHEAD } from '../custom-types-consts';
+import { Resource, SCHEDULE_DAYS_AHEAD } from '../custom-types-consts';
 import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { ResourceUnavailableError } from '../errors/resource-unavailable-error';
 import { Medic } from './medic';
@@ -13,15 +13,16 @@ import { Patient } from './patient';
 
 enum AppointmentType {
   consultation = 'consultation',
-  procedure = 'procedure'
+  procedure = 'procedure',
+  operation = 'operation'
 }
 
 @Entity()
-export class Appointment {
+export class Appointment implements Resource {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   timestamp!: Date;
 
   @ManyToOne(() => Patient, (patient) => patient?.appointments)
@@ -38,6 +39,10 @@ export class Appointment {
         medic.generateAppointments(SCHEDULE_DAYS_AHEAD, SCHEDULE_DAYS_AHEAD + 1)
       )
     );
+  };
+
+  isOwnedByUser = (userId: string): boolean => {
+    return this.patient?.user.id === userId || this.medic.user.id === userId;
   };
 
   static book = async (

@@ -5,14 +5,17 @@ import {
   Column,
   getRepository,
   OneToOne,
-  MoreThan
+  MoreThan,
+  BeforeInsert
 } from 'typeorm';
 import { Password } from '../classes/password';
 import { resetMailOptions, sendMail } from '../config/nodemailer-config';
 import { NotAuthorizedError } from '../errors/not-authorized-error';
+import { ResourceNotFoundError } from '../errors/resource-not-found-error';
 import { Medic } from './medic';
-import { OfficeAdmin } from './office-admin';
+import { Secretary } from './secretary';
 import { Patient } from './patient';
+import { Resource } from '../custom-types-consts';
 
 export interface UserAttrs {
   email: string;
@@ -24,7 +27,7 @@ export interface UserAttrs {
 }
 
 @Entity()
-export class User {
+export class User implements Resource {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -33,6 +36,11 @@ export class User {
 
   @Column()
   password!: string;
+
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    this.password = await Password.toHash(this.password);
+  }
 
   @Column({ nullable: true })
   firstName?: string;
@@ -46,24 +54,32 @@ export class User {
   @Column({ nullable: true, type: 'text' })
   tokenExpires?: number | null;
 
-  @OneToOne(() => Patient, (patient) => patient.user, { onDelete: 'CASCADE' })
+  @OneToOne(() => Patient, (patient) => patient.user)
   patient?: Patient;
 
   @OneToOne(() => Medic, (medic) => medic.user)
   medic?: Medic;
 
-  @OneToOne(() => OfficeAdmin, (officeAdmin) => officeAdmin.user)
-  officeAdmin?: OfficeAdmin;
+  @OneToOne(() => Secretary, (secretary) => secretary.user)
+  secretary?: Secretary;
 
-  static signup = async (email: string, password: string): Promise<User> => {
-    const user = await getRepository(User).findOne({ where: { email } });
-    if (user) throw new NotAuthorizedError('Invalid credentials');
+  isOwnedByUser = (userId: string): boolean => {
+    return this.id === userId;
+  };
 
-    password = await Password.toHash(password);
+  static signup = async (attrs: UserAttrs): Promise<User> => {
+    const { email, password, firstName, lastName } = attrs;
 
-    const newUser = getRepository(User).create({ email, password });
-    const createdUser = await getRepository(User).save(newUser);
-    return createdUser;
+    const dbUser = await getRepository(User).findOne({ where: { email } });
+    if (dbUser) throw new NotAuthorizedError('Invalid credentials');
+
+    const user = getRepository(User).create({
+      email,
+      password,
+      firstName,
+      lastName
+    });
+    return await getRepository(User).save(user);
   };
 
   static signin = async (email: string, password: string): Promise<User> => {
@@ -109,5 +125,28 @@ export class User {
 
     await getRepository(User).save(user);
     await User.signin(user.email, password);
+  };
+
+  static edit = async (
+    userId: string,
+    userAttrs: Partial<UserAttrs>,
+    newPassword?: string
+  ): Promise<User> => {
+    const { email, password, firstName, lastName } = userAttrs;
+    const user = await getRepository(User).findOne(userId);
+    if (!user) throw new ResourceNotFoundError('user');
+
+    if (password && newPassword) {
+      const passwordsMatch = await Password.compare(password, user.password);
+      if (!passwordsMatch) throw new NotAuthorizedError('Invalid credentials');
+    }
+
+    const mergedUser = getRepository(User).merge(user, {
+      email,
+      password: newPassword,
+      firstName,
+      lastName
+    });
+    return getRepository(User).save(mergedUser);
   };
 }

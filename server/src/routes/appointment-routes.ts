@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import { Appointment } from '../entity/appointment';
 import { Patient } from '../entity/patient';
 import { NotAuthorizedError } from '../errors/not-authorized-error';
-import { hasRole } from '../middlewares/has-role';
+import { isAdminOr } from '../middlewares/is-admin-or';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ const router = Router();
 
 router.post(
   '/book/:id',
-  hasRole(Patient),
+  isAdminOr([Patient]),
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = req.session?.currentUser?.id;
@@ -41,11 +41,5 @@ router.get('/', async (req: Request, res: Response) => {
   });
   res.send(appointments);
 });
-
-// router.get('/append', async (req: Request, res: Response) => {
-//   await Appointment.append();
-//   const appointments = await Appointment.findAll();
-//   res.send(appointments);
-// });
 
 export default router;

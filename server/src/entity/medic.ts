@@ -18,16 +18,23 @@ export enum MedicType {
   doctor = 'doctor'
 }
 
-type MedicAttrs = EmployeeAttrs & {
+export type MedicAttrs = EmployeeAttrs & {
   type: MedicType;
 };
 
 @Entity()
 export class Medic extends Employee {
+  @Column({ default: true })
+  isActive!: boolean;
+
   @Column()
   type!: MedicType;
 
-  @OneToOne(() => User, (user) => user.medic)
+  @OneToOne(() => User, (user) => user.medic, {
+    cascade: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  })
   @JoinColumn()
   user!: User;
 
@@ -35,42 +42,55 @@ export class Medic extends Employee {
   appointments!: Appointment[];
 
   static add = async (medicAttrs: MedicAttrs): Promise<Medic> => {
-    const { email, password, type, image, shiftStart, shiftEnd } = medicAttrs;
-    const user = await User.signup(email, password);
+    const { image, type, shiftStart, shiftEnd } = medicAttrs;
+    const user = await User.signup(medicAttrs);
 
     // handle image upload to cloudinary
 
     const medic = getRepository(Medic).create({
-      type,
+      user,
       image,
+      type,
       shiftStart,
-      shiftEnd,
-      user
+      shiftEnd
     });
-    const createdMedic = await getRepository(Medic).save(medic);
-
+    await getRepository(Medic).save(medic);
     await medic.generateAppointments(0, SCHEDULE_DAYS_AHEAD);
 
-    return createdMedic;
+    return medic;
   };
 
-  // static edit = async (medicAttrs: Partial<MedicAttrs>): Promise<void> => {
-  // if there's an image, persist to cloudinary FIRST, then delete the old one
-  // };
+  static edit = async (
+    userId: string,
+    medicAttrs: Partial<MedicAttrs>,
+    newPassword?: string
+  ): Promise<void> => {
+    const { image, type, shiftStart, shiftEnd } = medicAttrs;
+
+    const medic = await getRepository(Medic).findOne({
+      where: { user: { id: userId } },
+      relations: ['user']
+    });
+    if (!medic) throw new ResourceNotFoundError('medic');
+
+    const user = await User.edit(userId, medicAttrs, newPassword);
+    const mergedMedic = getRepository(Medic).merge(medic, {
+      user,
+      image,
+      type,
+      shiftStart,
+      shiftEnd
+    });
+
+    await getRepository(Medic).save(mergedMedic);
+  };
 
   static remove = async (userId: string): Promise<void> => {
-    const medic = await getRepository(Medic).findOne({
-      where: { user: { id: userId } }
-    });
-    if (!medic) throw new ResourceNotFoundError('user');
-
-    const user = await getRepository(User).findOne(userId);
-    if (!user) throw new ResourceNotFoundError('user');
-
-    await Promise.all([
-      getRepository(Medic).remove(medic),
-      getRepository(User).remove(user)
-    ]);
+    const medic = await getRepository(Medic).update(
+      { user: { id: userId } },
+      { isActive: false }
+    );
+    if (!medic.affected) throw new ResourceNotFoundError('medic');
   };
 
   generateAppointments = async (

@@ -3,19 +3,26 @@ Content-Type: application/json
 
 {
   "email": "adamlapinski1@gmail.com",
-  "password": "pass"
+  "password": "pass",
+  "firstName": "Pat",
+  "lastName": "Mc Patientface",
+  "token": "Trololo token",
+  "tokenExpires": 1234567890
 }
 ###
-PUT http://localhost:3000/patients/1
+GET http://localhost:3000/patients/6623a92c-ec35-4367-8b4c-03b820ceba1e
+###
+PATCH http://localhost:3000/patients/6623a92c-ec35-4367-8b4c-03b820ceba1e
 
 Content-Type: application/json
 
 {
-
+  "email": "yay an email",
+  "firstName": "Pedro",
+  "token":"yay a token!",
+  "lol":"trolololo"
 }
 ###
-DELETE http://localhost:3000/patients/5348f2cd-f7cf-41d4-a5b8-a00eca05af16
-###
-GET http://localhost:3000/patients/1
+DELETE http://localhost:3000/patients/6623a92c-ec35-4367-8b4c-03b820ceba1e
 ###
 GET http://localhost:3000/patients

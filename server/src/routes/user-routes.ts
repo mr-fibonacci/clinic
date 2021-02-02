@@ -1,6 +1,9 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
+import { Secretary } from '../entity/secretary';
 import { User } from '../entity/user';
+import { isAdminOr } from '../middlewares/is-admin-or';
+import { ownsResource } from '../middlewares/owns-resource';
 import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import {
@@ -10,18 +13,6 @@ import {
 } from '../validation-chains/user-req-body';
 
 const router = Router();
-
-router.post(
-  '/signup',
-  ...validateRequestBody(userReqBody),
-  async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    const { id } = await User.signup(email, password);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    req.session!.currentUser = { email, id };
-    res.sendStatus(201);
-  }
-);
 
 router.post(
   '/signin',
@@ -40,6 +31,20 @@ router.post('/signout', async (req: Request, res: Response) => {
     console.log('session destroyed');
   });
   res.sendStatus(200);
+});
+
+router.get('/protected', requireLogin, async (req: Request, res: Response) => {
+  console.log('currentUser:', req.session?.currentUser);
+  res.sendStatus(200);
+});
+
+router.get('/:id', ownsResource(User), async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await getRepository(User).findOne({
+    where: { id },
+    relations: ['patient', 'medic', 'secretary']
+  });
+  res.send(user);
 });
 
 router.post(
@@ -64,14 +69,9 @@ router.post(
   }
 );
 
-router.get('/protected', requireLogin, async (req: Request, res: Response) => {
-  console.log('currentUser:', req.session?.currentUser);
-  res.sendStatus(200);
-});
-
 router.get('/', async (req: Request, res: Response) => {
   const users = await getRepository(User).find({
-    relations: ['patient', 'medic']
+    relations: ['patient', 'medic', 'secretary']
   });
   res.send(users);
 });
