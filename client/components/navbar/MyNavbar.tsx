@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { useState } from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import Drawer from "../drawer/Drawer";
 
 const MyNavbar = (): JSX.Element => {
+  const handleSignOut = () => {
+    console.log("sign out!");
+  };
   return (
     <Navbar bg="dark" variant="dark">
       <Nav className="mr-auto">
@@ -23,9 +25,9 @@ const MyNavbar = (): JSX.Element => {
         <Link href="/signup" passHref>
           <Nav.Link>sign up</Nav.Link>
         </Link>
-        <Link href="/signout" passHref>
+        <div onClick={handleSignOut}>
           <Nav.Link>sign out</Nav.Link>
-        </Link>
+        </div>
       </Nav>
       <Link href="/" passHref>
         <Navbar.Brand href="/">clinic</Navbar.Brand>

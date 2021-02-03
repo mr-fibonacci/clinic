@@ -13,17 +13,17 @@ const SideBar = ({ visible, currentUser }: SideBarProps): JSX.Element => {
       <>
         <h4>patient centre</h4>
         <ul>
-          <Link href={`/patients/${currentUser.id}/appointments`} passHref>
+          <Link href={`/patient/appointments`} passHref>
             <Nav.Link>
               <li>appointments</li>
             </Nav.Link>
           </Link>
-          <Link href={`/patients/${currentUser.id}/prescriptions`} passHref>
+          <Link href={`/patient/prescriptions`} passHref>
             <Nav.Link>
               <li>prescriptions</li>
             </Nav.Link>
           </Link>
-          <Link href={`/patients/${currentUser.id}/payments`} passHref>
+          <Link href={`/patient/payments`} passHref>
             <Nav.Link>
               <li>payments</li>
             </Nav.Link>
