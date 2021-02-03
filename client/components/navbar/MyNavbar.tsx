@@ -5,12 +5,13 @@ import Drawer from "../drawer/Drawer";
 import { useCurrentUser } from "../UserContext";
 
 const MyNavbar = (): JSX.Element => {
-  const currentUser = useCurrentUser();
+  const { currentUser, setCurrentUser } = useCurrentUser();
   const handleSignOut = async () => {
     try {
       await axios.post("http://localhost:3000/users/signout", null, {
         withCredentials: true,
       });
+      setCurrentUser(null);
       console.log("signed out!");
     } catch (err) {
       console.log(err);

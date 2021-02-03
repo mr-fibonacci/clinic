@@ -1,10 +1,13 @@
 import { useState, FormEvent } from "react";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
+import { useCurrentUser } from "../UserContext";
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { setCurrentUser } = useCurrentUser();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -19,6 +22,7 @@ const SignInForm = () => {
         { withCredentials: true }
       );
       console.log(data);
+      setCurrentUser({ currentUser: data });
     } catch (err) {
       console.log(err);
     }

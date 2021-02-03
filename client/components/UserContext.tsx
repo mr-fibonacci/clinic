@@ -8,6 +8,7 @@ export const useCurrentUser = () => {
 
 export const CurrentUserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+
   const handleCurrentUser = async () => {
     try {
       const { data } = await axios.get(
@@ -27,7 +28,9 @@ export const CurrentUserProvider = ({ children }) => {
   }, []);
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, setCurrentUser: setCurrentUser }}
+    >
       {children}
     </CurrentUserContext.Provider>
   );
