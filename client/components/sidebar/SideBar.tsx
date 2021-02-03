@@ -10,30 +10,31 @@ interface SideBarProps {
 const SideBar = ({ visible, currentUser }: SideBarProps): JSX.Element => {
   return (
     <div className={visible ? css.visible : css.hidden}>
-      {currentUser ? (
-        <>
-          <h4>patient centre</h4>
-          <ul>
-            <Link href={`/patients/${currentUser.id}/appointments`}>
-              <Nav.Link>
-                <li>appointments</li>
-              </Nav.Link>
-            </Link>
-            <Link href={`/patients/${currentUser.id}/prescriptions`}>
-              <Nav.Link>
-                <li>prescriptions</li>
-              </Nav.Link>
-            </Link>
-            <Link href={`/patients/${currentUser.id}/payments`}>
-              <Nav.Link>
-                <li>payments</li>
-              </Nav.Link>
-            </Link>
-          </ul>
-        </>
-      ) : (
-        "please log in to gain access to patient profile"
-      )}
+      <>
+        <h4>patient centre</h4>
+        <ul>
+          <Link href={`/patients/${currentUser.id}/appointments`} passHref>
+            <Nav.Link>
+              <li>appointments</li>
+            </Nav.Link>
+          </Link>
+          <Link href={`/patients/${currentUser.id}/prescriptions`} passHref>
+            <Nav.Link>
+              <li>prescriptions</li>
+            </Nav.Link>
+          </Link>
+          <Link href={`/patients/${currentUser.id}/payments`} passHref>
+            <Nav.Link>
+              <li>payments</li>
+            </Nav.Link>
+          </Link>
+          <Link href={`/forgotpassword`} passHref>
+            <Nav.Link>
+              <li>forgot my password!</li>
+            </Nav.Link>
+          </Link>
+        </ul>
+      </>
     </div>
   );
 };
