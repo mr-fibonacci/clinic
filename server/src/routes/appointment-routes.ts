@@ -15,7 +15,7 @@ const router = Router();
 //   res.send(appointments);
 // });
 
-router.post(
+router.patch(
   '/book/:id',
   isAdminOr([Patient]),
   async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ router.post(
   }
 );
 
-router.post('/cancel/:id', async (req: Request, res: Response) => {
+router.patch('/cancel/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = req.session?.currentUser?.id;
   if (!userId) throw new NotAuthorizedError('Please log in');
@@ -40,6 +40,14 @@ router.get('/', async (req: Request, res: Response) => {
     relations: ['medic', 'patient']
   });
   res.send(appointments);
+});
+
+router.get('/active', async (req: Request, res: Response) => {
+  const activeAppointments = await getRepository(Appointment).find({
+    where: { patient: null },
+    relations: ['medic', 'patient']
+  });
+  res.send(activeAppointments);
 });
 
 export default router;

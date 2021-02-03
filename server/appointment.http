@@ -1,8 +1,10 @@
-PATCH  http://localhost:3000/appointments/book/72a0a7d9-7e83-4045-b41c-c12fd13e623f
+PATCH  http://localhost:3000/appointments/book/18bb74b3-00b8-4562-b0d0-1610f27d1282
 ###
 PATCH  http://localhost:3000/appointments/cancel/72a0a7d9-7e83-4045-b41c-c12fd13e623f
 ###
 GET http://localhost:3000/appointments/append
 ###
 GET http://localhost:3000/appointments
+###
+GET http://localhost:3000/appointments/active
 ###

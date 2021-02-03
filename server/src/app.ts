@@ -1,4 +1,5 @@
 import express, { json, Request, Response } from 'express';
+import cors from 'cors';
 import 'express-async-errors';
 import session from 'express-session';
 import 'reflect-metadata';
@@ -11,7 +12,12 @@ import patientRoutes from './routes/patient-routes';
 import appointmentRoutes from './routes/appointment-routes';
 
 const app = express();
-
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 app.use(json());
 app.use(
   session({

@@ -1,10 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Secretary } from '../entity/secretary';
 import { User } from '../entity/user';
-import { isAdminOr } from '../middlewares/is-admin-or';
 import { ownsResource } from '../middlewares/owns-resource';
-import { requireLogin } from '../middlewares/require-login';
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import {
   userReqBody,
@@ -33,9 +30,9 @@ router.post('/signout', async (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-router.get('/protected', requireLogin, async (req: Request, res: Response) => {
+router.get('/currentuser', async (req: Request, res: Response) => {
   console.log('currentUser:', req.session?.currentUser);
-  res.sendStatus(200);
+  res.send(req.session?.currentUser);
 });
 
 router.get('/:id', ownsResource(User), async (req: Request, res: Response) => {

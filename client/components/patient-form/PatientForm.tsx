@@ -42,7 +42,7 @@ class PatientForm extends React.Component<PatientFormProps, PatientFromState> {
     console.log("yay submit please!");
     try {
       const { data } = await axios.post(
-        `http://localhost:3000/users/signup`,
+        `http://localhost:3000/patients`,
         {
           ...this.state,
         },

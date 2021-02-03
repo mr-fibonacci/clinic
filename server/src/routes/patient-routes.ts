@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
+import { Appointment } from '../entity/appointment';
 import { Patient } from '../entity/patient';
 
 const router = Router();
@@ -25,6 +26,15 @@ router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   await Patient.remove(id);
   res.sendStatus(200);
+});
+
+router.get('/appointments', async (req: Request, res: Response) => {
+  const id = req.session?.currentUser?.id;
+  const patientsAppointments = await getRepository(Appointment).find({
+    relations: ['medic', 'patient'],
+    where: { patient: { user: { id } } }
+  });
+  res.send(patientsAppointments);
 });
 
 router.get('/:id', async (req: Request, res: Response) => {

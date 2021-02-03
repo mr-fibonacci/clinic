@@ -2,7 +2,7 @@ POST http://localhost:3000/users/signin
 Content-Type: application/json
 
 {
-  "email": "d1@d.com",
+  "email": "p@p.com",
   "password": "pass"
 }
 ###
@@ -28,3 +28,4 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/users/protected
 ###
+GET http://localhost:3000/users/currentuser
