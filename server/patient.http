@@ -2,7 +2,7 @@ POST http://localhost:3000/patients
 Content-Type: application/json
 
 {
-  "email": "adamlapinski1@gmail.com",
+  "email": "p@p.com",
   "password": "pass",
   "firstName": "Pat",
   "lastName": "Mc Patientface",
