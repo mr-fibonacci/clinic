@@ -1,20 +1,27 @@
 import axios from "axios";
 import { NextPage } from "next";
+import AppointmentCard, {
+  IAppointmentCard,
+} from "../components/appointment-card/AppointmentCard";
 
 interface Ibookappointment {
-  appointments: any[];
+  appointments: IAppointmentCard[];
 }
 
 const bookappointment: NextPage<Ibookappointment> = ({ appointments }) => {
-  console.log(appointments);
-  return <h1>appointments</h1>;
+  return (
+    <>
+      <h1>appointments</h1>
+      {appointments.map((appointment) => (
+        <AppointmentCard key={appointment.id} {...appointment} />
+      ))}
+    </>
+  );
 };
 
 bookappointment.getInitialProps = async () => {
-  // let data;
   try {
     let { data } = await axios.get("http://localhost:3000/appointments/active");
-    console.log(data);
     return { appointments: data };
   } catch (err) {
     console.log(err);
