@@ -1,0 +1,25 @@
+.hidden {
+  left: 0%;
+  transition: 500ms;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  left: -100%;
+  width: 250px;
+  z-index: 10;
+}
+
+.visible {
+  text-align: center;
+  border: 1px black solid;
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: 200ms;
+  color: #9a9da0;
+  background-color: #343a40;
+  z-index: 10;
+  padding-top: 20px;
+}
