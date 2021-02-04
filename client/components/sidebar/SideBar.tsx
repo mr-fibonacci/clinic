@@ -8,7 +8,6 @@ interface SideBarProps {
 }
 
 const SideBar = ({ visible, currentUser }: SideBarProps): JSX.Element => {
-  // const currentUser =
   return (
     <div className={visible ? css.visible : css.hidden}>
       <>
@@ -32,12 +31,13 @@ const SideBar = ({ visible, currentUser }: SideBarProps): JSX.Element => {
                 </Nav.Link>
               </Link>
             </>
-          ) : null}
-          <Link href={`/forgotpassword`} passHref>
-            <Nav.Link>
-              <li>forgot my password!</li>
-            </Nav.Link>
-          </Link>
+          ) : (
+            <Link href={`/forgotpassword`} passHref>
+              <Nav.Link>
+                <li>forgot my password!</li>
+              </Nav.Link>
+            </Link>
+          )}
         </ul>
       </>
     </div>

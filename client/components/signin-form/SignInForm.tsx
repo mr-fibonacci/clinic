@@ -1,4 +1,5 @@
 import { useState, FormEvent } from "react";
+import { useRouter } from "next/router";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 import { useCurrentUser } from "../UserContext";
@@ -8,6 +9,7 @@ const SignInForm = () => {
   const [password, setPassword] = useState("");
 
   const { setCurrentUser } = useCurrentUser();
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -23,6 +25,7 @@ const SignInForm = () => {
       );
       console.log(data);
       setCurrentUser({ currentUser: data });
+      router.push("/");
     } catch (err) {
       console.log(err);
     }

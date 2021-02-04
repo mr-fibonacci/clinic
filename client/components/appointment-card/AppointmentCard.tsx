@@ -7,7 +7,7 @@ export interface IAppointmentCard {
 }
 
 const AppointmentCard = (props: IAppointmentCard) => {
-  const { id, timestamp } = props;
+  const { timestamp } = props;
   const { type } = props.medic;
 
   return (
