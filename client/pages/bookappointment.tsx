@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextPage } from "next";
+import { Col, Container, Row } from "react-bootstrap";
 import AppointmentCard, {
   IAppointmentCard,
 } from "../components/appointment-card/AppointmentCard";
@@ -12,9 +13,14 @@ const bookappointment: NextPage<Ibookappointment> = ({ appointments }) => {
   return (
     <>
       <h1>appointments</h1>
-      {appointments.map((appointment) => (
-        <AppointmentCard key={appointment.id} {...appointment} />
-      ))}
+      <Container>
+        <Row>
+          {" "}
+          {appointments.map((appointment) => (
+            <AppointmentCard key={appointment.id} {...appointment} />
+          ))}
+        </Row>
+      </Container>
     </>
   );
 };

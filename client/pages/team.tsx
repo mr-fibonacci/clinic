@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextPage } from "next";
+import { Container, Row } from "react-bootstrap";
 import TeamCard from "../components/team-card/TeamCard";
 
 interface Iteam {
@@ -11,9 +12,13 @@ const team: NextPage<Iteam> = ({ medics }) => {
   return (
     <>
       <h1>Our Medical Team</h1>
-      {medics.map((medic) => (
-        <TeamCard key={medic.id} {...medic} />
-      ))}
+      <Container>
+        <Row>
+          {medics.map((medic) => (
+            <TeamCard key={medic.id} {...medic} />
+          ))}
+        </Row>
+      </Container>
     </>
   );
 };

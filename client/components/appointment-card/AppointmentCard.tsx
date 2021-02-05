@@ -15,8 +15,6 @@ const AppointmentCard = (props: IAppointmentCard) => {
       <Card.Body>
         <Card.Title>{timestamp}</Card.Title>
         <Card.Subtitle>{type}</Card.Subtitle>
-        <Card.Text>Appointment times:</Card.Text>
-        <Card.Text>{type}</Card.Text>
         <Button variant="primary">Book!</Button>
       </Card.Body>
     </Card>

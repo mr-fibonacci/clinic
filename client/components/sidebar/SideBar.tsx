@@ -1,6 +1,7 @@
 import css from "./SideBar.module.css";
 import Link from "next/link";
 import { Nav } from "react-bootstrap";
+import { useCurrentUser } from "../UserContext";
 
 interface SideBarProps {
   visible: boolean;
@@ -8,6 +9,7 @@ interface SideBarProps {
 }
 
 const SideBar = ({ visible, currentUser }: SideBarProps): JSX.Element => {
+  // const {currentUser} = useCurrentUser()
   return (
     <div className={visible ? css.visible : css.hidden}>
       <>
